@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLabsAndRequests } from '../../hooks/useLabs';
 import { useForm, RegisterOptions } from 'react-hook-form';
@@ -37,38 +37,12 @@ const messages = {
 type LabRequestFormField = Omit<LabRequest, 'id_LaboratoryRequest' | 'status' | 'userId'>;
 
 const LabRequestPage: React.FC = () => {
-  const { labs, labRequests, loading, error, fetchLabRequestsData } = useLabsAndRequests();
-  const { user } = useAuth();
+  const { labs, labRequests, loading, error, fetchLabRequestsData } = useLabsAndRequests();  const { user } = useAuth();
   const [selectedLab, setSelectedLab] = useState<Laboratory | null>(null);
   const [activeModal, setActiveModal] = useState<"form" | "calendar" | "reservationDetails" | null>(null);
   const [selectedReservation, setSelectedReservation] = useState<LabRequest | null>(null);
-  const { register, handleSubmit, reset, watch } = useForm<LabRequestFormField>();
+  const { register, handleSubmit, reset } = useForm<LabRequestFormField>();
   const { isSubmitting, submitLabRequest } = useLabRequest();
-  
-  // Estados para el contador de caracteres
-  const [charCounts, setCharCounts] = useState({
-    activityDescription: 0,
-    needs: 0
-  });
-  
-  // Observar campos para el contador de caracteres
-  const activityDescription = watch('activityDescription');
-  const needs = watch('needs');
-  
-  // Actualizar contadores cuando cambien los valores
-  React.useEffect(() => {
-    setCharCounts(prev => ({
-      ...prev,
-      activityDescription: activityDescription?.length || 0
-    }));
-  }, [activityDescription]);
-  
-  React.useEffect(() => {
-    setCharCounts(prev => ({
-      ...prev,
-      needs: needs?.length || 0
-    }));
-  }, [needs]);
 
   const today = moment().format("YYYY-MM-DD");
   const minTime = moment().set({ hour: 6, minute: 0, second: 0 }).format("HH:mm");
