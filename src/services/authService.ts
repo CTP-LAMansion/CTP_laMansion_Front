@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import { ChangePasswordDto } from '../types/Types';
 
 // URL base para tu API
-const BASE_URL = 'https://ctplamansion-production.up.railway.app/api';
+const BASE_URL = 'http://l0g4kwcw4wc8480o80w00w8k.31.97.41.124.sslip.io/api';
 
 // Define la estructura esperada del JWT decodificado
 interface DecodedUser {

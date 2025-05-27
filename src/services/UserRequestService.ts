@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-const API_URL = 'https://ctplamansion-production.up.railway.app/api';
+const API_URL = 'http://l0g4kwcw4wc8480o80w00w8k.31.97.41.124.sslip.io/api';
 
 export const fetchUserLabRequests = async (userId: string) => {
   const token = Cookies.get('token');
