@@ -9,7 +9,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/es';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import { RoomRequest } from '../../types/RoomRequestType';
 
 // Configurar moment en español
@@ -283,56 +283,61 @@ const RoomRequestPage: React.FC = () => {
       end: moment(`${request.endDate} ${request.endTime}`, "YYYY-MM-DD HH:mm").toDate(),
       resource: request
     }));
-
   return (
     <div className="max-w-7xl mx-auto p-4 bg-white rounded-lg shadow-lg">
       <h2 className="text-center text-2xl font-semibold mb-4">Solicitar Sala</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading && <div className="flex justify-center items-center h-screen">
-          <ClipLoader color="#3b82f6" size={100} />
-        </div>}
-        {error && <p className="text-red-600">{error}</p>}
-        {Array.isArray(rooms) &&
-          rooms
-            .filter(room => room.isActive)
-            .map((room) => (
-              <div
-                key={room.id_Room}
-                className="p-4 border border-gray-300 rounded-lg shadow-md flex flex-col bg-white hover:shadow-lg transition-shadow duration-200"
-              >
-                <img
-                  src={room.url_Image}
-                  alt={room.name}
-                  className="w-full h-48 object-cover mb-4 rounded-lg"
-                />
-                <h3 className="font-semibold text-lg mb-2">{room.name}</h3>
-                <p className="flex-grow text-sm text-gray-700 mb-2">{room.description}</p>
-                <p className="mt-2 text-sm text-gray-600">
-                  <strong>Capacidad:</strong> {room.capacity} personas
-                </p>
-                <div className="mt-4 flex flex-col space-y-2">
-                  <button
-                    className="w-full text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
-                    onClick={() => {
-                      setSelectedRoom(room);
-                      setActiveModal("calendar");
-                    }}
-                  >
-                    Ver Disponibilidad
-                  </button>
-                  <button
-                    className="w-full text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
-                    onClick={() => {
-                      setSelectedRoom(room);
-                      setActiveModal("form");
-                    }}
-                  >
-                    Reservar Sala
-                  </button>
+      
+      {loading && <LoadingSpinner size="large" variant="classic" message="Cargando salas..." />}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      )}
+        {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.isArray(rooms) &&
+            rooms
+              .filter(room => room.isActive)
+              .map((room) => (
+                <div
+                  key={room.id_Room}
+                  className="p-4 border border-gray-300 rounded-lg shadow-md flex flex-col bg-white hover:shadow-lg transition-shadow duration-200"
+                >
+                  <img
+                    src={room.url_Image}
+                    alt={room.name}
+                    className="w-full h-48 object-cover mb-4 rounded-lg"
+                  />
+                  <h3 className="font-semibold text-lg mb-2">{room.name}</h3>
+                  <p className="flex-grow text-sm text-gray-700 mb-2">{room.description}</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    <strong>Capacidad:</strong> {room.capacity} personas
+                  </p>
+                  <div className="mt-4 flex flex-col space-y-2">
+                    <button
+                      className="w-full text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium"
+                      onClick={() => {
+                        setSelectedRoom(room);
+                        setActiveModal("calendar");
+                      }}
+                    >
+                      Ver Disponibilidad
+                    </button>
+                    <button
+                      className="w-full text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm font-medium"
+                      onClick={() => {
+                        setSelectedRoom(room);
+                        setActiveModal("form");
+                      }}
+                    >
+                      Reservar Sala
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-      </div>
+              ))}
+        </div>
+      )}
 
       {activeModal === "calendar" && selectedRoom && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

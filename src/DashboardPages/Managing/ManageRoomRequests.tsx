@@ -5,6 +5,7 @@ import { RequestStatus, RoomRequest } from '../../types/RoomRequestType';
 import { useRoomsAndRequests } from '../../hooks/useRooms';
 import RoomRequestDetailsModal from '../../modals/RoomRequestDetailsModal';
 import RoomHistoryModal from '../../modals/RoomHistoryModal';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const ManageRoomRequests: React.FC = () => {
   const {
@@ -107,7 +108,11 @@ const ManageRoomRequests: React.FC = () => {
         </button>
       </div>
 
-      {loading && <p className="text-gray-600">Cargando solicitudes...</p>}
+      {loading && (
+        <div className="flex justify-center py-6">
+          <LoadingSpinner size="medium" variant="classic" message="Cargando solicitudes..." />
+        </div>
+      )}
       {error && <p className="text-red-600">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

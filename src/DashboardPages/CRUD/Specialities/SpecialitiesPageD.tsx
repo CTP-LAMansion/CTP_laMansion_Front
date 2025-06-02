@@ -7,7 +7,7 @@ import { AiFillDelete, AiTwotoneEdit, AiTwotonePlusSquare } from 'react-icons/ai
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SpecialityForm from './SpecialityForm';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const SpecialitiesPage: React.FC = () => {
   const { specialities, loading, error, handleAddSpeciality, handleEditSpeciality, handleDeleteSpeciality } = useSpecialities();
@@ -61,10 +61,26 @@ const SpecialitiesPage: React.FC = () => {
       toast.success('Especialidad eliminada correctamente');
       handleCloseDeleteModal();
     }
-  };
+  };  if (loading) return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Especialidades</h1>
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner variant="classic" size="large" message="Cargando especialidades..." />
+      </div>
+    </div>
+  );
 
-  if (loading) return <div className="flex justify-center items-center h-screen"> <ClipLoader color="#3b82f6" size={100} /></div>
-  if (error) return <p>{error}</p>;
+  if (error) return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Especialidades</h1>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="font-semibold">Error al cargar especialidades</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      </div>
+    </div>
+  );
 
   // Cálculo de especialidades para la página actual
   const indexOfLastItem = currentPage * itemsPerPage;

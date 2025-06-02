@@ -15,7 +15,7 @@ import { useOrders } from '../hooks/useOrders';
 import { RequestStatus as RoomRequestStatus } from '../types/RoomRequestType';
 import { RequestStatus as LabRequestStatus } from '../types/LaboratoryRequestType';
 import { RequestStatus as OrderRequestStatus } from '../types/OrderTypes';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -90,12 +90,25 @@ const AllRequestsCharts: React.FC = () => {
 
   // Gráficos de Órdenes
   const orderMonthlyData = createChartData(months, orderMonthlyDataObj.countsByMonth, `Órdenes aprobadas - ${currentYear}`, 'rgba(153, 102, 255, 1)');
-  const orderYearlyData = createChartData(Object.keys(orderYearlyDataObj.countsByYear), Object.values(orderYearlyDataObj.countsByYear), 'Órdenes aprobadas', 'rgba(153, 102, 255, 1)');
-
-  if (loadingRooms || loadingLabs || loadingOrders) return <div className="flex justify-center items-center h-screen">
-    <ClipLoader color="#3b82f6" size={100} />
-  </div>;
-  if (errorRooms || errorLabs || errorOrders) return <p className="text-red-600">Error cargando datos.</p>;
+  const orderYearlyData = createChartData(Object.keys(orderYearlyDataObj.countsByYear), Object.values(orderYearlyDataObj.countsByYear), 'Órdenes aprobadas', 'rgba(153, 102, 255, 1)');  if (loadingRooms || loadingLabs || loadingOrders) return (
+    <div className="max-w-7xl mx-auto p-4 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold mb-6">Gráficos de Solicitudes y Órdenes</h2>
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner variant="classic" size="large" message="Cargando gráficos de solicitudes..." />
+      </div>
+    </div>
+  );
+  if (errorRooms || errorLabs || errorOrders) return (
+    <div className="max-w-7xl mx-auto p-4 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold mb-6">Gráficos de Solicitudes y Órdenes</h2>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="font-semibold">Error al cargar datos del gráfico</p>
+          <p className="text-sm mt-1">No se pudieron cargar los datos de las solicitudes</p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-7xl mx-auto p-4 bg-white rounded-lg shadow-lg">

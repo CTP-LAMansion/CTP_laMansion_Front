@@ -6,6 +6,7 @@ import { AiFillDelete, AiTwotoneEdit, AiTwotonePlusSquare } from 'react-icons/ai
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Laboratory } from '../../../types/Types';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const LaboratoriesPage: React.FC = () => {
   const { laboratories, loading, error, handleAddLaboratory, handleEditLaboratory, handleDeleteLaboratory } = useLaboratories();
@@ -87,10 +88,13 @@ const LaboratoriesPage: React.FC = () => {
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
+          <tbody>            {loading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-2">Cargando...</td>
+                <td colSpan={5} className="px-4 py-2">
+                  <div className="flex justify-center py-6">
+                    <LoadingSpinner size="medium" variant="classic" message="Cargando laboratorios..." />
+                  </div>
+                </td>
               </tr>
             ) : error ? (
               <tr>

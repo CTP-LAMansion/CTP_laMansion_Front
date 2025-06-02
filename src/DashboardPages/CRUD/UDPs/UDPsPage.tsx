@@ -5,7 +5,7 @@ import { AiFillDelete, AiTwotoneEdit, AiTwotonePlusSquare } from 'react-icons/ai
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UDP } from '../../../types/Types';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const UDPsPage: React.FC = () => {
   const { udps, loading, error, handleAddUDP, handleEditUDP, handleDeleteUDP } = useUDPs();
@@ -34,14 +34,33 @@ const UDPsPage: React.FC = () => {
     }
     handleCloseEditModal();
   };
-
   const handleConfirmDelete = async (id: number) => {
     await handleDeleteUDP(id);
     toast.error('UDP eliminado');
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen"> <ClipLoader color="#3b82f6" size={100} /></div>
-  if (error) return <p>{error}</p>;
+  if (loading) return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <ToastContainer />
+      <h1 className="text-3xl font-bold mb-6 text-center">Gestión de UDPs</h1>
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner variant="classic" size="large" message="Cargando UDPs..." />
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <ToastContainer />
+      <h1 className="text-3xl font-bold mb-6 text-center">Gestión de UDPs</h1>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="font-semibold">Error al cargar UDPs</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      </div>
+    </div>
+  );
 
   // Cálculo de UDPs para la página actual
   const indexOfLastItem = currentPage * itemsPerPage;

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import ClipLoader from "react-spinners/ClipLoader";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 import { 
   FaCalendar, 
   FaFilter, 
@@ -194,10 +194,9 @@ const UserRequestsTable: React.FC<UserRequestsTableProps> = ({
           </div>
         </div>
         
-        {/* Tabla de solicitudes */}
-        {loading ? (
+        {/* Tabla de solicitudes */}        {loading ? (
           <div className="flex justify-center py-6">
-            <ClipLoader color="#3b82f6" size={40} />
+            <LoadingSpinner size="medium" variant="classic" />
           </div>
         ) : error ? (
           <div className="text-red-500 py-4 text-center">

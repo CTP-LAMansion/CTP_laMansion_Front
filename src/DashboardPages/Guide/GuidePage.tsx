@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FolderConfig } from '../../config/driveConfig';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface FileItem {
   id: string;
@@ -94,13 +95,11 @@ const GuidePage = () => {
       file.id === fileId ? { ...file, isExpanded: !file.isExpanded } : file
     ));
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500" />
-          <p className="mt-4 text-gray-600 animate-pulse">Cargando manuales...</p>
+          <LoadingSpinner size="large" variant="classic" message="Cargando manuales..." />
         </div>
       </div>
     );

@@ -5,6 +5,7 @@ import { RequestStatus, LabRequest } from '../../types/LaboratoryRequestType';
 import { useLabsAndRequests } from '../../hooks/useLabs';
 import LabRequestDetailsModal from '../../modals/LabRequestDetailsModal';
 import LabHistoryModal from '../../modals/LabHistoryModal';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const ManageLabRequests: React.FC = () => {
   const {
@@ -115,7 +116,11 @@ const ManageLabRequests: React.FC = () => {
           Ver Historial de Solicitudes
         </button>
       </div>
-      {loading && <p className="text-gray-600">Cargando solicitudes...</p>}
+      {loading && (
+        <div className="flex justify-center py-6">
+          <LoadingSpinner size="medium" variant="classic" message="Cargando solicitudes..." />
+        </div>
+      )}
       {error && <p className="text-red-600">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
