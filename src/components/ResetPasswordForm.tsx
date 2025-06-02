@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import { resetPassword } from '../services/authService';
+import PasswordField from './PasswordField';
+import PasswordValidation from './PasswordValidation';
 
 Modal.setAppElement('#root');
 
@@ -104,22 +106,20 @@ const ResetPasswordForm: React.FC = () => {
                             placeholder="Código de verificación"
                             required
                         />
-                    </div>
-
-                    <div>
-                        <label htmlFor="newPassword" className="block mb-2">Nueva Contraseña</label>
-                        <input
-                            type="password"
+                    </div>                    <div>
+                        <PasswordField
+                            label="Nueva Contraseña"
                             id="newPassword"
                             value={newPassword}
                             onChange={(e) => {
                                 setNewPassword(e.target.value);
                                 setPasswordErrors(validatePassword(e.target.value));
                             }}
-                            className="w-full border rounded-md py-2 px-3 bg-gray-100 border-gray-300 text-gray-800 focus:border-blue-500 focus:outline-none"
+                            inputClassName="w-full border rounded-md py-2 px-3 pr-10 bg-gray-100 border-gray-300 text-gray-800 focus:border-blue-500 focus:outline-none"
                             placeholder="Nueva contraseña"
                             required
                         />
+                        <PasswordValidation password={newPassword} />
                         {passwordErrors.length > 0 && (
                             <div className="text-xs text-red-500 mt-1">
                                 {passwordErrors.map((error, index) => (
@@ -130,13 +130,12 @@ const ResetPasswordForm: React.FC = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="confirmPassword" className="block mb-2">Confirmar Contraseña</label>
-                        <input
-                            type="password"
+                        <PasswordField
+                            label="Confirmar Contraseña"
                             id="confirmPassword"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full border rounded-md py-2 px-3 bg-gray-100 border-gray-300 text-gray-800 focus:border-blue-500 focus:outline-none"
+                            inputClassName="w-full border rounded-md py-2 px-3 pr-10 bg-gray-100 border-gray-300 text-gray-800 focus:border-blue-500 focus:outline-none"
                             placeholder="Confirmar contraseña"
                             required
                         />

@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import ImageUploader from './ImageUploader'; // Importar el componente ImageUploader
+import PasswordField from './PasswordField';
+import PasswordValidation from './PasswordValidation';
 import { register as registerUser } from "../services/authService"; // Importar la función de registro desde authService
 
 Modal.setAppElement('#root');
@@ -223,14 +225,14 @@ const RegisterForm: React.FC = () => {
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
               <p className="text-gray-500 text-xs mt-1">Máx. 50 caracteres</p>
-          </div>
+          </div>     
 
           {/* Contraseñas */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="password" className="block mb-1 text-sm">Contraseña</label>
-              <input
-                type="password"
+              <PasswordField
+                label="Contraseña"
                 {...register("password", { 
                   required: "La contraseña es requerida",
                   minLength: {
@@ -249,25 +251,25 @@ const RegisterForm: React.FC = () => {
                   }
                 })}
                 id="password"
-                className="w-full border rounded-md py-1 px-2 bg-gray-100 border-gray-300 text-sm text-gray-800 focus:border-blue-500 focus:outline-none"
                 placeholder="••••••••"
+                error={errors.password?.message}
+                inputClassName="w-full border rounded-md py-1 px-2 pr-10 bg-gray-100 border-gray-300 text-sm text-gray-800 focus:border-blue-500 focus:outline-none"
               />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              <PasswordValidation password={password} />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block mb-1 text-sm">Confirmar Contraseña</label>
-              <input
-                type="password"
+              <PasswordField
+                label="Confirmar Contraseña"
                 {...register("confirmPassword", { 
                   required: "Debe confirmar la contraseña",
                   validate: value => value === password || "Las contraseñas no coinciden"
                 })}
                 id="confirmPassword"
-                className="w-full border rounded-md py-1 px-2 bg-gray-100 border-gray-300 text-sm text-gray-800 focus:border-blue-500 focus:outline-none"
                 placeholder="••••••••"
+                error={errors.confirmPassword?.message}
+                inputClassName="w-full border rounded-md py-1 px-2 pr-10 bg-gray-100 border-gray-300 text-sm text-gray-800 focus:border-blue-500 focus:outline-none"
               />
-              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
             </div>
           </div>
 
