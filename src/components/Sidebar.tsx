@@ -13,6 +13,7 @@ import {
   FaImage,
   FaTimes,
   FaChartBar,
+  FaChartLine,
   FaSignOutAlt,
   FaRuler
 } from 'react-icons/fa';
@@ -316,8 +317,7 @@ const Sidebar: React.FC = () => {
                 {(!isSidebarCollapsed || isMobile) && <span>UDPs</span>}
               </div>
               {(!isSidebarCollapsed || isMobile) && (isUDPOpen ? <FaChevronUp /> : <FaChevronDown />)}
-            </h3>
-            {isUDPOpen && (!isSidebarCollapsed || isMobile) && (
+            </h3>            {isUDPOpen && (!isSidebarCollapsed || isMobile) && (
               <div className="pl-4">
                 <Link to="/dashboard/udps" className={`flex items-center mb-2 hover:bg-gray-700 p-2 rounded ${location.pathname === '/dashboard/udps' ? 'bg-gray-700' : ''}`}>
                   <GiTeacher className="mr-2" />
@@ -326,6 +326,10 @@ const Sidebar: React.FC = () => {
                 <Link to="/dashboard/admin-udp-balance" className={`flex items-center mb-2 hover:bg-gray-700 p-2 rounded ${location.pathname === '/dashboard/admin-udp-balance' ? 'bg-gray-700' : ''}`}>
                   <GiTakeMyMoney className="mr-2" />
                   Balance UDP
+                </Link>
+                <Link to="/dashboard/udp-balance-dashboard" className={`flex items-center mb-2 hover:bg-gray-700 p-2 rounded ${location.pathname === '/dashboard/udp-balance-dashboard' ? 'bg-gray-700' : ''}`}>
+                  <FaChartLine className="mr-2" />
+                  Dashboard Balance
                 </Link>
               </div>
             )}

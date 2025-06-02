@@ -121,14 +121,35 @@ export const getUDPBalanceMonthlyChartData = async (
 // Obtener datos para gráficas de distribución por tipo
 export const getUDPBalanceTypeChartData = async (
   udpId: number, 
-  isExpense: boolean = true
+  startDate?: string,
+  endDate?: string
 ): Promise<TransactionTypeChartData[]> => {
   try {
-    const url = `/UDPBalanceHistory/${udpId}/chart/bytype?isExpense=${isExpense}`;
+    let url = `/UDPBalanceHistory/${udpId}/chart/bytype`;
+    const params = new URLSearchParams();
+    
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
     const response = await api.get(url);
     return response.data;
   } catch (error) {
     console.error(`Error al obtener datos para gráfica por tipo de la UDP ${udpId}:`, error);
+    throw error;
+  }
+};
+
+// Obtener datos totales del balance
+export const getUDPBalanceTotalData = async (udpId: number): Promise<any> => {
+  try {
+    const response = await api.get(`/UDPBalanceHistory/${udpId}/chart/total`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener datos totales de balance para la UDP ${udpId}:`, error);
     throw error;
   }
 };

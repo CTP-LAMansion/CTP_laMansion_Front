@@ -198,14 +198,21 @@ const DashboardHome: React.FC = () => {
           title="UDPs"
           description="Gestionar UDPs"
           color="violet"
-        />,
-        <QuickLink
+        />,        <QuickLink
           key="balance-udp"
           to="/dashboard/admin-udp-balance"
           icon={<GiTakeMyMoney className="text-fuchsia-500" size={24} />}
           title="Balance UDP"
-          description="Ver balances"
+          description="Administrar balances"
           color="fuchsia"
+        />,
+        <QuickLink
+          key="dashboard-udp"
+          to="/dashboard/udp-balance-dashboard"
+          icon={<FaChartBar className="text-purple-500" size={24} />}
+          title="Dashboard UDP"
+          description="Ver analytics"
+          color="purple"
         />
       );
     }
