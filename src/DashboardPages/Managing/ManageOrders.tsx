@@ -6,6 +6,7 @@ import { RequestStatus, Order } from '../../types/OrderTypes';
 import ProductDetailsModal from '../../modals/ProductDetailsModal';
 import HistoryModal from '../../modals/HistoryModal'; // Modal de historial
 import OrderRequestResponseModal from '../../modals/OrderRequestResponseModal'; // Modal para respuestas
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const ManageOrders: React.FC = () => {
   const { orders, loading, error, handleApproveOrder, handleRejectOrder } = useOrders(RequestStatus.Pending);
@@ -116,11 +117,14 @@ const ManageOrders: React.FC = () => {
         >
           Ver Historial de Solicitudes
         </button>
-      </div>
-
-      {/* Loading and Error states */}
-      {loading && <p>Cargando órdenes...</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      </div>      {/* Loading and Error states */}
+      {loading && <LoadingSpinner size="medium" variant="classic" message="Cargando órdenes..." />}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      )}
 
       {/* Orders Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -11,6 +11,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment/locale/es';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 // Configurar moment en español
 moment.locale('es');
@@ -286,16 +287,26 @@ const LabRequestPage: React.FC = () => {
       end: moment(`${request.endDate} ${request.endTime}`, "YYYY-MM-DD HH:mm").toDate(),
       resource: request
     }));
-
   return (
     <div className="max-w-7xl mx-auto p-4 bg-white rounded-lg shadow-lg">
       <h2 className="text-center text-2xl font-semibold mb-4">Solicitar Laboratorio</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading && <p>Cargando laboratorios...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-        {Array.isArray(labs) && labs
-          .filter(lab => lab.isActive)
-          .map(lab => (
+      
+      {loading && <LoadingSpinner size="large" variant="classic" message="Cargando laboratorios..." />}
+      
+      {error && (
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="font-semibold">Error al cargar laboratorios</p>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
+        </div>
+      )}
+      
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.isArray(labs) && labs
+            .filter(lab => lab.isActive)
+            .map(lab => (
             <div
               key={lab.id_Laboratory}
               className="p-4 border border-gray-300 rounded-lg shadow-md flex flex-col bg-white hover:shadow-lg transition-shadow duration-200"
@@ -328,11 +339,11 @@ const LabRequestPage: React.FC = () => {
                   }}
                 >
                   Reservar Laboratorio
-                </button>
-              </div>
+                </button>              </div>
             </div>
           ))}
-      </div>
+        </div>
+      )}
 
       {activeModal === "calendar" && selectedLab && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

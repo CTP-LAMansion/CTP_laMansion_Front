@@ -3,7 +3,7 @@ import { addUserRole, getUserRoles, getUsers, removeUserRole, deleteUser, getUse
 import { FaUserCircle, FaPhone, FaEnvelope, FaIdCard, FaTrash, FaInfoCircle, FaTimesCircle, FaCheckCircle, FaSpinner } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface User {
   id: number;
@@ -296,12 +296,10 @@ const RolesManagement: React.FC = () => {
             </select>
           </div>
         </div>
-      </div>
-
-      {/* Indicador de carga para usuarios */}
+      </div>      {/* Indicador de carga para usuarios */}
       {isLoadingUsers && (
         <div className="flex justify-center items-center py-8">
-          <ClipLoader color="#3b82f6" size={100} />
+          <LoadingSpinner size="large" variant="classic" message="Cargando usuarios..." />
         </div>
       )}
 

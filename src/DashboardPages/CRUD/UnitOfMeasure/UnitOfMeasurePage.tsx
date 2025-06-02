@@ -7,7 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteEventModal from '../../../modals/DeleteEventModal';
 import UnitOfMeasureForm from './UnitOfMeasureForm';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const UnitOfMeasurePage: React.FC = () => {
   const { 
@@ -98,13 +98,14 @@ const UnitOfMeasurePage: React.FC = () => {
     const newItemsPerPage = parseInt(e.target.value);
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Resetear a la primera página cuando cambia el número de elementos
-  };
-
-  // Mostrar loader mientras carga los datos
+  };  // Mostrar loader mientras carga los datos
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader color="#3b82f6" size={100} />
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Unidades de Medida</h1>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner variant="classic" size="large" message="Cargando unidades de medida..." />
+        </div>
       </div>
     );
   }
@@ -112,9 +113,13 @@ const UnitOfMeasurePage: React.FC = () => {
   // Mostrar mensaje de error si ocurre alguno
   if (error) {
     return (
-      <div className="text-center p-8">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-          <p>Error: {error}</p>
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Unidades de Medida</h1>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="font-semibold">Error al cargar unidades de medida</p>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
         </div>
       </div>
     );

@@ -6,6 +6,7 @@ import { Room } from '../../../types/Types';
 import { AiFillDelete, AiTwotoneEdit, AiTwotonePlusSquare } from 'react-icons/ai';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const RoomsPage: React.FC = () => {
   const { rooms, loading, error, handleAddRoom, handleEditRoom, handleDeleteRoom } = useRoomsAndRequests();
@@ -92,15 +93,23 @@ const RoomsPage: React.FC = () => {
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
-          </thead>
-          <tbody>
+          </thead>          <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-2 text-center">Cargando...</td>
+                <td colSpan={5} className="px-4 py-2 text-center">
+                  <div className="flex justify-center py-4">
+                    <LoadingSpinner size="medium" variant="classic" message="Cargando salas..." />
+                  </div>
+                </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={5} className="px-4 py-2 text-center text-red-500">Error: {error}</td>
+                <td colSpan={5} className="px-4 py-2 text-center">
+                  <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 mx-4">
+                    <p className="font-semibold">Error al cargar salas</p>
+                    <p className="text-sm mt-1">{error}</p>
+                  </div>
+                </td>
               </tr>
             ) : rooms.length === 0 ? (
               <tr>

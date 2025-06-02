@@ -6,7 +6,7 @@ import { Event } from '../../../types/Types';
 import { AiFillDelete, AiTwotoneEdit, AiTwotonePlusSquare } from 'react-icons/ai';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const EventosPage: React.FC = () => {
   const { events, loading, error, handleAddEvent, handleEditEvent, handleDeleteEvent } = useEvents();
@@ -55,21 +55,26 @@ const EventosPage: React.FC = () => {
       handleCloseDeleteModal();
     }
   };
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader color="#3b82f6" size={100} />
+      <div className="min-h-screen bg-gray-100 p-8">
+        <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Eventos</h1>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner variant="classic" size="large" message="Cargando eventos..." />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
+      <div className="min-h-screen bg-gray-100 p-8">
+        <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Eventos</h1>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="font-semibold">Error al cargar eventos</p>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
         </div>
       </div>
     );

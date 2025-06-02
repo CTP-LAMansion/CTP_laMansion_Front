@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { CgCloseO, CgMoreO } from "react-icons/cg";
-import ClipLoader from 'react-spinners/ClipLoader';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const CertificationRequestsTable: React.FC = () => {
   const {
@@ -94,12 +94,13 @@ const CertificationRequestsTable: React.FC = () => {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Ha ocurrido un error');
     }
-  };
-
-  if (loading) {
+  };  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader color="#3b82f6" size={100} />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8 text-center">Solicitudes de Certificación</h1>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="large" variant="classic" message="Cargando solicitudes de certificación..." />
+        </div>
       </div>
     );
   }

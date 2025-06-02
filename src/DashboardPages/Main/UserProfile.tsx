@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"; // Importación esencial que faltaba
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { useAuth } from "../../contexts/AuthContext";
 import { ChangePasswordDto } from "../../types/Types";
-import ClipLoader from "react-spinners/ClipLoader";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import { FaTimes, FaEye, FaEyeSlash, FaCheck } from "react-icons/fa"; // Iconos completos
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -68,12 +68,12 @@ const UserProfile: React.FC = () => {
 
   const handleRefreshRequests = () => {
     fetchUserRequests();
-  };
-
-  // CAMBIO - Loader centrado con mensaje
+  };  // CAMBIO - Loader centrado con mensaje
   if (loading) return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <ClipLoader color="#3b82f6" size={100} />
+    <div className="max-w-5xl mx-auto my-8 flex flex-col space-y-8">
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner variant="classic" size="large" message="Cargando perfil de usuario..." />
+      </div>
     </div>
   );
   
@@ -330,10 +330,9 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               type="submit"
               disabled={loading}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-70"
-            >
-              {loading ? (
+            >              {loading ? (
                 <span className="flex items-center">
-                  <ClipLoader color="#ffffff" size={16} className="mr-2" />
+                  <LoadingSpinner size="small" variant="inline" />
                   Guardando...
                 </span>
               ) : (
