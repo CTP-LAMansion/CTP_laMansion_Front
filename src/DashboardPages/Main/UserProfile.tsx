@@ -4,7 +4,9 @@ import { useUserProfile } from "../../hooks/useUserProfile";
 import { useAuth } from "../../contexts/AuthContext";
 import { ChangePasswordDto } from "../../types/Types";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { FaTimes, FaEye, FaEyeSlash, FaCheck } from "react-icons/fa"; // Iconos completos
+import PasswordField from "../../components/PasswordField";
+import PasswordValidation from "../../components/PasswordValidation";
+import { FaTimes } from "react-icons/fa"; // Iconos completos
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ViewProfile from "./ProfileComponents/ViewProfile";
@@ -135,36 +137,14 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
   const { register, handleSubmit, watch, reset, formState: { errors } } = 
     useForm<ChangePasswordDto>();
   
-  const [showPassword, setShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false
-  });
-  
   const password = watch("newPassword", "");
   const currentPassword = watch("currentPassword", "");
-  
-  const passwordStrength = {
-    length: password?.length >= 8,
-    hasNumber: /\d/.test(password || ''),
-    hasUpper: /[A-Z]/.test(password || ''),
-    hasLower: /[a-z]/.test(password || ''),
-    hasSpecial: /[^A-Za-z0-9]/.test(password || ''),
-  };
-  const strengthScore = Object.values(passwordStrength).filter(Boolean).length;
   
   useEffect(() => {
     if (passwordSuccess) {
       reset();
     }
   }, [passwordSuccess, reset]);
-
-  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
-    setShowPassword(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }));
-  };
 
   const handleModalSubmit = async (data: ChangePasswordDto) => {
     try {
@@ -187,128 +167,51 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             <FaTimes />
           </button>
         </div>
-        
-        <form onSubmit={handleSubmit(handleModalSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(handleModalSubmit)} className="space-y-4">
           {/* Contraseña actual */}
-          <div>
-            <label className="block font-medium mb-1">Contraseña Actual:</label>
-            <div className="relative">
-              <input
-                type={showPassword.current ? "text" : "password"}
-                {...register("currentPassword", {
-                  required: "La contraseña actual es requerida"
-                })}
-                className="w-full p-2 pr-10 border rounded-lg"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => togglePasswordVisibility('current')}
-              >
-                {showPassword.current ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-            {errors.currentPassword && (
-              <span className="text-red-500 text-sm">{errors.currentPassword.message}</span>
-            )}
-          </div>
+          <PasswordField
+            label="Contraseña Actual:"
+            {...register("currentPassword", {
+              required: "La contraseña actual es requerida"
+            })}
+            error={errors.currentPassword?.message}
+            inputClassName="w-full p-2 pr-10 border rounded-lg"
+          />
           
           {/* Nueva contraseña */}
           <div>
-            <label className="block font-medium mb-1">Nueva Contraseña:</label>
-            <div className="relative">
-              <input
-                type={showPassword.new ? "text" : "password"}
-                {...register("newPassword", {
-                  required: "La nueva contraseña es requerida",
-                  minLength: {
-                    value: 8,
-                    message: "La contraseña debe tener al menos 8 caracteres"
-                  },
-                  pattern: {
-                    value: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).*$/,
-                    message: "La contraseña debe contener al menos una mayúscula, un número y un carácter especial"
-                  },
-                  validate: value => value !== currentPassword || "La nueva contraseña debe ser diferente a la actual"
-                })}
-                className="w-full p-2 pr-10 border rounded-lg"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => togglePasswordVisibility('new')}
-              >
-                {showPassword.new ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-            {errors.newPassword && (
-              <span className="text-red-500 text-sm">{errors.newPassword.message}</span>
-            )}
+            <PasswordField
+              label="Nueva Contraseña:"
+              {...register("newPassword", {
+                required: "La nueva contraseña es requerida",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres"
+                },
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).*$/,
+                  message: "La contraseña debe contener al menos una minúscula, una mayúscula, un número y un carácter especial"
+                },
+                validate: value => value !== currentPassword || "La nueva contraseña debe ser diferente a la actual"
+              })}
+              error={errors.newPassword?.message}
+              inputClassName="w-full p-2 pr-10 border rounded-lg"
+            />
             
             {/* Indicador de fortaleza */}
-            {password && (
-              <div className="mt-2">
-                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full ${
-                      strengthScore <= 2 ? 'bg-red-500' : 
-                      strengthScore <= 4 ? 'bg-yellow-500' : 
-                      'bg-green-500'
-                    } ${
-                      strengthScore === 1 ? 'w-1/5' :
-                      strengthScore === 2 ? 'w-2/5' :
-                      strengthScore === 3 ? 'w-3/5' :
-                      strengthScore === 4 ? 'w-4/5' :
-                      strengthScore === 5 ? 'w-full' : 'w-0'
-                    }`}
-                  ></div>
-                </div>
-                <ul className="mt-1 text-xs">
-                  <li className={`flex items-center ${passwordStrength.length ? 'text-green-600' : 'text-gray-500'}`}>
-                    {passwordStrength.length ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
-                    Mínimo 8 caracteres
-                  </li>
-                  <li className={`flex items-center ${passwordStrength.hasUpper ? 'text-green-600' : 'text-gray-500'}`}>
-                    {passwordStrength.hasUpper ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
-                    Al menos una mayúscula
-                  </li>
-                  <li className={`flex items-center ${passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'}`}>
-                    {passwordStrength.hasNumber ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
-                    Al menos un número
-                  </li>
-                  <li className={`flex items-center ${passwordStrength.hasSpecial ? 'text-green-600' : 'text-gray-500'}`}>
-                    {passwordStrength.hasSpecial ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
-                    Al menos un carácter especial
-                  </li>
-                </ul>
-              </div>
-            )}
+            <PasswordValidation password={password} />
           </div>
           
           {/* Confirmar nueva contraseña */}
-          <div>
-            <label className="block font-medium mb-1">Confirmar Nueva Contraseña:</label>
-            <div className="relative">
-              <input
-                type={showPassword.confirm ? "text" : "password"}
-                {...register("confirmNewPassword", {
-                  required: "Debe confirmar la contraseña",
-                  validate: value => value === watch("newPassword") || "Las contraseñas no coinciden"
-                })}
-                className="w-full p-2 pr-10 border rounded-lg"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => togglePasswordVisibility('confirm')}
-              >
-                {showPassword.confirm ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-            {errors.confirmNewPassword && (
-              <span className="text-red-500 text-sm">{errors.confirmNewPassword.message}</span>
-            )}
-          </div>
+          <PasswordField
+            label="Confirmar Nueva Contraseña:"
+            {...register("confirmNewPassword", {
+              required: "Debe confirmar la contraseña",
+              validate: value => value === watch("newPassword") || "Las contraseñas no coinciden"
+            })}
+            error={errors.confirmNewPassword?.message}
+            inputClassName="w-full p-2 pr-10 border rounded-lg"
+          />
           
           {/* Error del backend */}
           {error && (
