@@ -25,6 +25,8 @@ export const useProducts = () => {
   const isMounted = useRef<boolean>(true);
   // Registrar si hay una búsqueda en progreso
   const searchInProgress = useRef<boolean>(false);
+  // Ref para el timeout del debounce
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Obtener todos los productos
   const fetchProducts = async () => {
@@ -135,13 +137,17 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
-
-  // Buscar productos por nombre 
+  // Buscar productos por nombre con debounce
 const handleSearchProducts = async (name: string) => {
   // No buscar si el término está vacío
   if (name.length === 0) {
     setSearchResults([]);
     setSearchLoading(false);
+    // Limpiar cualquier búsqueda pendiente
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+      debounceTimeoutRef.current = null;
+    }
     return [];
   }
   
@@ -150,46 +156,113 @@ const handleSearchProducts = async (name: string) => {
     return searchResults;
   }
   
-  // No iniciar una nueva búsqueda si hay una en progreso
-  if (searchInProgress.current) {
-    return searchResults;
+  // Cancelar búsqueda anterior si existe
+  if (debounceTimeoutRef.current) {
+    clearTimeout(debounceTimeoutRef.current);
   }
   
-  // Actualizar el estado de carga de la búsqueda
+  // Actualizar el estado de carga inmediatamente
   setSearchLoading(true);
-  searchInProgress.current = true;
   
-  try {
-    // Almacenar el término de búsqueda actual
-    lastSearchTerm.current = name;
-    
-    console.log("Buscando productos con término:", name);
-    const results = await searchProductsByName(name);
-    console.log("Resultados de la búsqueda:", results);
-    
-    // Solo actualizar el estado si el componente sigue montado
-    if (isMounted.current) {
-      setSearchResults(results);
-      setError(null);
-    }
-    
-    searchInProgress.current = false;
-    setSearchLoading(false);
-    return results;
-  } catch (err) {
-    console.error('Error al buscar productos:', err);
-    
-    // Solo actualizar el estado si el componente sigue montado
-    if (isMounted.current) {
-      setError('Error al buscar productos');
+  return new Promise<Product[]>((resolve) => {
+    debounceTimeoutRef.current = setTimeout(async () => {
+      // Verificar si ya hay una búsqueda en progreso
+      if (searchInProgress.current) {
+        setSearchLoading(false);
+        resolve(searchResults);
+        return;
+      }
+      
+      searchInProgress.current = true;
+      
+      try {
+        // Almacenar el término de búsqueda actual
+        lastSearchTerm.current = name;
+        
+        console.log("Buscando productos con término:", name);
+        const results = await searchProductsByName(name);
+        console.log("Resultados de la búsqueda:", results);
+        
+        // Solo actualizar el estado si el componente sigue montado
+        if (isMounted.current) {
+          setSearchResults(results);
+          setError(null);
+        }
+        
+        searchInProgress.current = false;
+        setSearchLoading(false);
+        resolve(results);
+      } catch (err) {
+        console.error('Error al buscar productos:', err);
+        
+        // Solo actualizar el estado si el componente sigue montado
+        if (isMounted.current) {
+          setError('Error al buscar productos');
+          setSearchResults([]);
+          setSearchLoading(false);
+        }
+        
+        searchInProgress.current = false;
+        resolve([]);
+      }
+    }, 500); // Debounce de 500ms - ajustable según necesidades
+  });
+};
+
+  // Función de búsqueda inmediata (sin debounce) para casos especiales
+  const handleSearchProductsImmediate = async (name: string) => {
+    // No buscar si el término está vacío
+    if (name.length === 0) {
       setSearchResults([]);
       setSearchLoading(false);
+      return [];
     }
     
-    searchInProgress.current = false;
-    return [];
-  }
-};
+    // No buscar si es el mismo término que acabamos de buscar
+    if (name === lastSearchTerm.current) {
+      return searchResults;
+    }
+    
+    // No iniciar una nueva búsqueda si hay una en progreso
+    if (searchInProgress.current) {
+      return searchResults;
+    }
+    
+    // Actualizar el estado de carga de la búsqueda
+    setSearchLoading(true);
+    searchInProgress.current = true;
+    
+    try {
+      // Almacenar el término de búsqueda actual
+      lastSearchTerm.current = name;
+      
+      console.log("Buscando productos inmediatamente con término:", name);
+      const results = await searchProductsByName(name);
+      console.log("Resultados de la búsqueda inmediata:", results);
+      
+      // Solo actualizar el estado si el componente sigue montado
+      if (isMounted.current) {
+        setSearchResults(results);
+        setError(null);
+      }
+      
+      searchInProgress.current = false;
+      setSearchLoading(false);
+      return results;
+    } catch (err) {
+      console.error('Error al buscar productos:', err);
+      
+      // Solo actualizar el estado si el componente sigue montado
+      if (isMounted.current) {
+        setError('Error al buscar productos');
+        setSearchResults([]);
+        setSearchLoading(false);
+      }
+      
+      searchInProgress.current = false;
+      return [];
+    }
+  };
 
   // Obtener producto por nombre exacto
   const handleGetProductByName = async (name: string) => {
@@ -206,11 +279,14 @@ const handleSearchProducts = async (name: string) => {
       setLoading(false);
     }
   };
-
   // Limpieza al desmontar
   useEffect(() => {
     return () => {
       isMounted.current = false;
+      // Limpiar el timeout del debounce al desmontar
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -218,7 +294,6 @@ const handleSearchProducts = async (name: string) => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
   return {
     products,
     selectedProduct,
@@ -233,6 +308,7 @@ const handleSearchProducts = async (name: string) => {
     handlePatchProduct,
     handleDeleteProduct,
     handleSearchProducts,
+    handleSearchProductsImmediate,
     handleGetProductByName
   };
 };
