@@ -37,6 +37,7 @@ const SolicitarLaboratorio = React.lazy(() => import('../DashboardPages/Requests
 const Unauthorized = React.lazy(() => import('../pages/UnauthorizedPage')); // Página de no autorizado
 const OrderComponent = React.lazy(() => import('../DashboardPages/Requests/OrderComponent'));
 const UpdateUDPBalanceComponent = React.lazy(() => import('../DashboardPages/Managing/UpdateUDPBalanceComponent'));
+const UDPBalanceDashboard = React.lazy(() => import('../DashboardPages/Managing/UDPBalanceDashboard'));
 const OrdenesDePedido = React.lazy(() => import('../DashboardPages/Managing/ManageOrders'));
 // Galería pública
 const GalleryPage = React.lazy(() => import('../pages/GalleryPage'));
@@ -148,13 +149,22 @@ const AppRouter: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              
-              {/* Actualización de balance UDP - AdminOrUDPManagerPolicy */}
+                {/* Actualización de balance UDP - AdminOrUDPManagerPolicy */}
               <Route
                 path="admin-udp-balance"
                 element={
                   <ProtectedRoute requiredRoles={policies.adminOrUDPManager}>
                     <UpdateUDPBalanceComponent />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Dashboard de Balance UDP - AdminOrUDPManagerPolicy */}
+              <Route
+                path="udp-balance-dashboard"
+                element={
+                  <ProtectedRoute requiredRoles={policies.adminOrUDPManager}>
+                    <UDPBalanceDashboard />
                   </ProtectedRoute>
                 }
               />

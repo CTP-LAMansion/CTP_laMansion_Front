@@ -83,13 +83,12 @@ export const useUDPBalanceHistory = (udpId: number) => {
       setLoading(false);
     }
   };
-
   // Cargar datos para gráfica por tipo
-  const loadTypeChartData = async (isExpense: boolean = true) => {
+  const loadTypeChartData = async (startDate?: string, endDate?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getUDPBalanceTypeChartData(udpId, isExpense);
+      const data = await getUDPBalanceTypeChartData(udpId, startDate, endDate);
       setTypeChartData(data);
       return data;
     } catch (err) {
