@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UDP } from '../types/Types';
-import { getUsers } from '../services/userService'; // Asume que tienes este servicio
+import { getUsers } from '../services/userService';
+import ImageUploader from '../components/ImageUploader';
 
 interface User {
   id: number;
@@ -22,6 +23,7 @@ const EditUDPModal: React.FC<EditUDPModalProps> = ({ show, udp, onClose, onSave 
   const [area, setArea] = useState('');
   const [balance, setBalance] = useState(0);
   const [userId, setUserId] = useState(0);
+  const [url_Image, setUrl_Image] = useState('');
 
   // Estados para la búsqueda de usuarios
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +39,7 @@ const EditUDPModal: React.FC<EditUDPModalProps> = ({ show, udp, onClose, onSave 
       setArea(udp.area);
       setBalance(udp.balance);
       setUserId(udp.userId);
+      setUrl_Image(udp.url_Image || '');
 
       // Buscar el usuario seleccionado si estamos editando
       if (udp.userId) {
@@ -57,6 +60,7 @@ const EditUDPModal: React.FC<EditUDPModalProps> = ({ show, udp, onClose, onSave 
       setUserId(0);
       setSelectedUser(null);
       setSearchTerm('');
+      setUrl_Image('');
     }
   }, [udp, allUsers]);
 
@@ -94,12 +98,13 @@ const EditUDPModal: React.FC<EditUDPModalProps> = ({ show, udp, onClose, onSave 
 
   const handleSubmit = () => {
     const udpData: UDP = {
-      id_UDP: udp ? udp.id_UDP : 0, // Al editar, usar el id actual; al crear, se ignora este valor
+      id_UDP: udp ? udp.id_UDP : 0,
       title,
       description,
       area,
       balance,
       userId,
+      url_Image
     };
     onSave(udpData);
     onClose();
@@ -108,129 +113,139 @@ const EditUDPModal: React.FC<EditUDPModalProps> = ({ show, udp, onClose, onSave 
   if (!show) return null;
 
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+    <div      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-white p-6 rounded-md w-96 shadow-lg">
-        <h2 id="modal-title" className="text-2xl font-bold mb-6 text-gray-700">
-          {udp ? 'Editar UDP' : 'Agregar UDP'}
-        </h2>
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          {/* Campo Título */}
-          <div>
-            <label htmlFor="udp-title" className="block font-semibold mb-1 text-gray-600">
-              Título
-            </label>
-            <input
-              id="udp-title"
-              type="text"
-              className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
-              placeholder="Ingrese el título del UDP"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <h2 id="modal-title" className="text-2xl font-bold mb-6 text-gray-700">
+            {udp ? 'Editar UDP' : 'Agregar UDP'}
+          </h2>
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Campo Título */}
+              <div>
+                <label htmlFor="udp-title" className="block font-semibold mb-1 text-gray-600">
+                  Título
+                </label>
+                <input
+                  id="udp-title"
+                  type="text"
+                  className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
+                  placeholder="Ingrese el título del UDP"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
 
-          {/* Campo Descripción */}
-          <div>
-            <label htmlFor="udp-description" className="block font-semibold mb-1 text-gray-600">
-              Descripción
-            </label>
-            <textarea
-              id="udp-description"
-              className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
-              placeholder="Ingrese la descripción"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </div>
+              {/* Campo Área */}
+              <div>
+                <label htmlFor="udp-area" className="block font-semibold mb-1 text-gray-600">
+                  Área
+                </label>
+                <input
+                  id="udp-area"
+                  type="text"
+                  className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
+                  placeholder="Ingrese el área"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  required
+                />
+              </div>
 
-          {/* Campo Área */}
-          <div>
-            <label htmlFor="udp-area" className="block font-semibold mb-1 text-gray-600">
-              Área
-            </label>
-            <input
-              id="udp-area"
-              type="text"
-              className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
-              placeholder="Ingrese el área"
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              required
-            />
-          </div>
+              {/* Campo Balance */}
+              <div>
+                <label htmlFor="udp-balance" className="block font-semibold mb-1 text-gray-600">
+                  Balance
+                </label>
+                <input
+                  id="udp-balance"
+                  type="number"
+                  className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
+                  placeholder="Ingrese el balance"
+                  value={balance}
+                  onChange={(e) => setBalance(Number(e.target.value))}
+                  required
+                />
+              </div>
 
-          {/* Campo Balance */}
-          <div>
-            <label htmlFor="udp-balance" className="block font-semibold mb-1 text-gray-600">
-              Balance
-            </label>
-            <input
-              id="udp-balance"
-              type="number"
-              className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
-              placeholder="Ingrese el balance"
-              value={balance}
-              onChange={(e) => setBalance(Number(e.target.value))}
-              required
-            />
-          </div>
-
-          {/* Campo de búsqueda de usuario */}
-          <div>
-            <label htmlFor="udp-user" className="block font-semibold mb-1 text-gray-600">
-              Usuario
-            </label>
-            <div className="relative">
-              <input
-                id="udp-user"
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
-                placeholder="Buscar usuario por nombre o apellidos"
-              />
-              {filteredUsers.length > 0 && (
-                <ul className="absolute z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-48 overflow-y-auto">
-                  {filteredUsers.map((user) => (
-                    <li
-                      key={user.id}
-                      onClick={() => handleUserSelect(user)}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      {`${user.name} ${user.lastName} ${user.lastName2}`}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {/* Campo de búsqueda de usuario */}
+              <div>
+                <label htmlFor="udp-user" className="block font-semibold mb-1 text-gray-600">
+                  Usuario
+                </label>
+                <div className="relative">
+                  <input
+                    id="udp-user"
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200"
+                    placeholder="Buscar usuario por nombre o apellidos"
+                  />
+                  {filteredUsers.length > 0 && (
+                    <ul className="absolute z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-48 overflow-y-auto">
+                      {filteredUsers.map((user) => (
+                        <li
+                          key={user.id}
+                          onClick={() => handleUserSelect(user)}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          {`${user.name} ${user.lastName} ${user.lastName2}`}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Botones */}
-          <div className="flex justify-end space-x-4">
-            
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
-            >
-              Guardar
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
+            {/* Campo Descripción - Ancho completo */}
+            <div>
+              <label htmlFor="udp-description" className="block font-semibold mb-1 text-gray-600">
+                Descripción
+              </label>
+              <textarea
+                id="udp-description"
+                className="border border-gray-300 rounded-md p-2 w-full focus:ring focus:ring-blue-200 min-h-[100px]"
+                placeholder="Ingrese la descripción"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Campo para subir imagen - Ancho completo */}
+            <div>
+              <label className="block font-semibold mb-1 text-gray-600">
+                Imagen
+              </label>
+              <ImageUploader onImageUpload={(url) => setUrl_Image(url)} />
+            </div>
+
+            {/* Botones */}
+            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-6">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition w-full sm:w-auto"
+              >
+                Guardar
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="bg-gray-400 text-white px-6 py-2 rounded-md hover:bg-gray-500 transition w-full sm:w-auto"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

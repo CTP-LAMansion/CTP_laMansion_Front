@@ -76,16 +76,20 @@ const UDPsPage: React.FC = () => {
           {udps.map((udp, index) => (
             <div
               key={udp.id_UDP}
-              data-aos="fade-up" // Animación AOS
+              data-aos="fade-up"
               className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                } items-center justify-between mb-16 p-8 bg-white rounded-lg`}
+                } items-center justify-between mb-16 p-8 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300`}
             >
-              {/* Imagen de la UDP (puedes reemplazar con una imagen real) */}
-              <div className="md:w-1/2 w-full h-80">
+              {/* Imagen de la UDP */}
+              <div className="md:w-1/2 w-full h-80 overflow-hidden rounded-lg">
                 <img
-                  className="w-full h-full object-cover rounded-lg"
-                  src="https://via.placeholder.com/600x400" // Imagen de placeholder
+                  className="w-full h-full object-cover rounded-lg shadow-lg transition-all duration-300 hover:scale-105 hover:brightness-110"
+                  src={udp.url_Image || 'https://via.placeholder.com/600x400?text=UDP+Image'}
                   alt={udp.title}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://via.placeholder.com/600x400?text=No+Image';
+                  }}
                 />
               </div>
 

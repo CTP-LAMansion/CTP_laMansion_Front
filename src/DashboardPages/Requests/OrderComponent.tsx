@@ -155,7 +155,7 @@ const OrderComponent: React.FC = () => {
 
   // Submit order
   const handleSubmitOrder = async () => {
-    if (!requesterArea || !receiver || !comments || selectedProducts.length === 0) {
+    if (!requesterArea || !receiver  || selectedProducts.length === 0) {
       toast.error('Todos los campos y al menos un producto son requeridos.');
       return;
     }
