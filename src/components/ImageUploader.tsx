@@ -37,7 +37,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, initialIma
       setError(null);
 
       const response = await axios.post(
-        `https://api.imgbb.com/1/upload?key=bf79f82c0d0d19e2d9c15e6247dca5f7`,
+        `https://api.imgbb.com/1/upload?key=282a78839723c6f11c49c14a9c9f343e`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },

@@ -147,6 +147,7 @@ export interface UDP {
   userLastName2?: string;
   useremail?: string;
   userphoneNumber?: string;
+  url_Image?: string;
 }
 
 export interface Gallery {
